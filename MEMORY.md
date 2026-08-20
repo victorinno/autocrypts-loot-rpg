@@ -61,3 +61,9 @@ The interactive manual-control test consumed one vial, reflected by the field-me
 ## 2026-08-20 — Central Tableau UX Repair
 
 The central room UX failure was caused by a broad late-stage CSS selector forcing every direct stage child into relative positioning. That overrode the absolute positioning required by the player card, hostile card, room briefing, and primary action. The repair restores explicit absolute layers, confines decorative route geometry to non-interactive pseudo-elements, and separates the state cards from the room briefing. Desktop and mobile screenshots show the cards, ready marker, briefing, and Breach First Room action without overlap or blocked hit targets.
+
+## 2026-08-20 — Skill Mastery Verification
+
+The updated demo route reached an active Cinder Husk combat at depth 04. The visible combat record showed `Cleave [M1] deals 17 slash damage.` and `Bleed applied: 4 damage for 3 turns.`, confirming that three successful uses promoted Cleave to mastery rank one, increased it from 15 to 17 damage, and increased bleed potency from 3 to 4. The enemy carried the bleed status, while the six-tier doctrine was available in all automation and combo selectors.
+
+The deterministic mastery suite verified all 18 class skills, six skills per class, and the mastery progression rule. It covered bleed, ward gain, ward break, restorative strikes, execution, elemental exposure, burn, chill, venom, and deterministic critical strikes. Desktop and mobile screenshots showed the six-tier folio and proficiency summary without clipped controls. Type checking and the production build passed after the expansion.

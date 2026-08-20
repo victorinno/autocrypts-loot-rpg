@@ -6,6 +6,7 @@ import { Archive, ArrowDown, ArrowUp, BookOpenText, Box, ChevronRight, Compass, 
 import { CATALOGUE, CATALOGUE_TOTAL, CLASSES, CONDITIONS, DAMAGE_META, ITEM_SLOTS, ITEM_TIERS, classById, skillsForClass } from "@/game/data";
 import { canUseHealing, equipItem, enterRoom, healingAmount, newGame, reorderAutomation, salvageItem, selectClass, tickCombat, unlockSkill, updateAutomation, updateCombo, useHealingVial } from "@/game/engine";
 import { compareItemToEquipped, isEquipped, type LoadoutComparison } from "@/game/inventory";
+import { effectPower, masteryLine, masteryRank, skillDamage } from "@/game/mastery";
 import { createGameScene, type GameHandle } from "@/game/scene";
 import type { ClassId, ConditionId, DamageType, GameState, Item, ItemSlot, ItemTier, LogTone, Skill } from "@/game/types";
 
@@ -21,7 +22,10 @@ function SkillNode({ skill, game, setGame }: { skill: Skill; game: GameState; se
   const unlocked = game.player.unlockedSkillIds.includes(skill.id);
   const previous = skillsForClass(skill.classId).find((entry) => entry.tier === skill.tier - 1);
   const available = !unlocked && game.player.skillPoints > 0 && (!previous || game.player.unlockedSkillIds.includes(previous.id));
-  return <button className={`skill-node ${unlocked ? "unlocked" : ""} ${available ? "available" : ""}`} disabled={!available && !unlocked} onClick={() => available && setGame((state) => unlockSkill(state, skill.id))}><span className="skill-tier">T{skill.tier + 1}</span><span className="skill-name">{skill.name}</span><DamageTag type={skill.damageType} /><span className="skill-copy">{unlocked ? `${skill.damage} DMG · ${skill.cooldown}T CD` : available ? "Unlock / 1 SP" : "Locked"}</span></button>;
+  const uses = game.player.skillUses[skill.id] ?? 0;
+  const effect = effectPower(skill.effect, uses);
+  const effectSuffix = skill.effect.kind === "execute" || skill.effect.kind === "critical" || skill.effect.kind === "chill" ? "%" : "";
+  return <button className={`skill-node ${unlocked ? "unlocked" : ""} ${available ? "available" : ""}`} disabled={!available && !unlocked} onClick={() => available && setGame((state) => unlockSkill(state, skill.id))}><span className="skill-tier">T{skill.tier + 1}</span><span className="skill-name">{skill.name}</span><DamageTag type={skill.damageType} /><span className="skill-copy">{unlocked ? `${skillDamage(skill, uses)} DMG · ${skill.effect.label} ${effect}${effectSuffix}` : available ? "Unlock / 1 SP" : "Locked"}</span>{unlocked && <span className="mastery-chip">{masteryLine(skill, uses)}</span>}</button>;
 }
 
 function TierDot({ tier }: { tier: ItemTier }) { return <span className={`tier-dot tier-${tier.toLowerCase()}`} />; }
@@ -30,6 +34,13 @@ function HealingPanel({ game, setGame }: { game: GameState; setGame: React.Dispa
   const ready = canUseHealing(game);
   const nextRestore = healingAmount(game.player);
   return <section className="panel healing-panel"><div className="panel-kicker">01A / Field medicine</div><div className="healing-heading"><div><HeartPulse size={17} /><span><b>Restorative vial</b><small>Auto-engages at 35% vitality.</small></span></div><em>{game.player.healingCharges}/{game.player.maxHealingCharges}</em></div><button className="healing-action" disabled={!ready} onClick={() => setGame((state) => useHealingVial(state))}>{game.healingCooldown > 0 ? `Recharging · ${game.healingCooldown}T` : game.player.healingCharges === 0 ? "No restorative charge" : `Mend +${nextRestore} vitality`}</button></section>;
+}
+
+function MasteryFolio({ game, skills }: { game: GameState; skills: Skill[] }) {
+  const unlocked = skills.filter((skill) => game.player.unlockedSkillIds.includes(skill.id));
+  const casts = unlocked.reduce((total, skill) => total + (game.player.skillUses[skill.id] ?? 0), 0);
+  const ranks = unlocked.reduce((total, skill) => total + masteryRank(game.player.skillUses[skill.id] ?? 0), 0);
+  return <section className="panel mastery-panel"><div className="panel-kicker">01B / Doctrinal stats</div><div className="panel-heading"><span>Skill proficiency</span><Sparkles size={15} /></div><div className="mastery-metrics"><span><b>{casts}</b> casts</span><span><b>{ranks}</b> ranks</span><span><b>{unlocked.length}</b> active</span></div><p>Every three successful casts add a mastery rank: <b>+2 damage</b> and stronger secondary effects.</p></section>;
 }
 
 function deltaLabel(value: number, suffix = ""): string { return value > 0 ? `+${value}${suffix}` : value < 0 ? `${value}${suffix}` : `±0${suffix}`; }
@@ -88,7 +99,8 @@ export default function GameCanvas() {
         <section className="panel player-panel"><div className="panel-kicker">01 / Adventurer</div><div className="player-title"><div className="class-sigil">{classSpec.short}</div><div><h1>{classSpec.name}</h1><p>{classSpec.description}</p></div></div><Meter label="VITALITY" value={game.player.health} max={game.player.maxHealth} /><div className="stat-row"><span><Shield size={14} /> Ward <b>{game.player.ward}</b></span><span><Gem size={14} /> Gold <b>{game.player.gold}</b></span><span><Sparkles size={14} /> XP <b>{game.player.xp}</b></span></div></section>
         <HealingPanel game={game} setGame={setGame} />
         <section className="panel"><div className="panel-heading"><span>Class folio</span><BookOpenText size={15} /></div><div className="class-list">{CLASSES.map((entry) => <button key={entry.id} className={entry.id === game.player.classId ? "class-choice selected" : "class-choice"} onClick={() => setGame(selectClass(entry.id as ClassId))}><b>{entry.name}</b><span>{entry.primaryDamage}</span></button>)}</div></section>
-        <section className="panel skill-panel"><div className="panel-heading"><span>Skill tree</span><b className="point-badge">{game.player.skillPoints} SP</b></div><div className="skill-tree">{classSkills.map((skill) => <SkillNode key={skill.id} skill={skill} game={game} setGame={setGame} />)}</div></section>
+        <section className="panel skill-panel"><div className="panel-heading"><span>Skill tree / 6 tiers</span><b className="point-badge">{game.player.skillPoints} SP</b></div><p className="panel-intro">Unlock the next doctrine tier, then build mastery by casting it in combat.</p><div className="skill-tree">{classSkills.map((skill) => <SkillNode key={skill.id} skill={skill} game={game} setGame={setGame} />)}</div></section>
+        <MasteryFolio game={game} skills={classSkills} />
         <section className="panel equipment-panel"><div className="panel-heading"><span>Equipped / 5 slots</span><Box size={15} /></div>{game.equipment.slice(0, 5).map((item) => <button className="item-row item-row-button" key={item.id} onClick={() => { setInventoryOpen(true); setInventoryView("inventory"); inspectItem(item); }}><TierDot tier={item.tier} /><div><b>{item.name}</b><small>{item.slot} · {item.stat}</small></div><em>{item.tier}</em></button>)}<button className="inventory-mini-link" onClick={() => setInventoryOpen(true)}><PackageOpen size={13} /> Open item ledger</button></section>
       </aside>
 

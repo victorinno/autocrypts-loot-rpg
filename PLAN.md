@@ -45,3 +45,11 @@ Each run begins with two restorative vial charges. A vial restores **30% of maxi
 The item ledger compares the selected acquired item against the active loadout entry for the same slot. Because a slot always maps to one stat family, the system parses the item’s numerical field-stat and displays the signed delta as an **upgrade**, **downgrade**, or **lateral** result. The inspector also exposes tier movement and salvage-value movement. When the slot is empty, the ledger identifies the selected record as an open-slot equip rather than inventing a comparison.
 
 - **Verify:** comparison values are calculated only for the same slot; stat, tier, and value changes use directional labels; equipped entries compare to themselves without presenting a false upgrade; and the compact mobile inspector remains readable.
+
+## Skill Mastery and Secondary Effects
+
+Each class receives a linear six-tier field doctrine. Unlocking still uses skill points and its immediate predecessor, while **mastery** is earned through successful casts. Every three casts raises a skill by one mastery rank, up to rank five. A mastery rank adds two base damage and increases the skill’s secondary-effect magnitude by its defined scaling value.
+
+Secondary effects are explicit combat rules, not flavor text. The system supports burn, bleed, venom, chill, ward gain, ward break, elemental exposure, deterministic critical strikes, restorative strikes, and execute thresholds. Burn, bleed, and venom deal damage over time; chill reduces retaliation; ward absorbs retaliation; ward break improves later physical hits; exposure improves later elemental hits; critical strikes trigger deterministically from skill-use count; restorative strikes recover vitality; and execute skills end a target below their mastery-scaled threshold.
+
+- **Verify:** each class exposes six ordered skills; unlocks obey each tier prerequisite; each successful cast increases only that skill’s use counter; every third cast reaches the next mastery rank; rank changes damage and the stated secondary effect; burn/bleed/venom ticks, chill, ward, sunder, exposure, critical, healing, and execute behavior are logged; and the skill folio communicates primary damage, effect strength, mastery, and progress to the next rank.

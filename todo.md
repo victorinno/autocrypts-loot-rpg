@@ -45,3 +45,12 @@
 - [x] Display tier, field-stat, value, and directional upgrade/downgrade feedback.
 - [x] Preserve clear behavior when no item is equipped in a selected slot.
 - [x] Verify ledger comparison on desktop and mobile viewports.
+
+## Skill System Expansion
+
+- [x] Expand each class to a six-tier skill tree with distinct primary and secondary effects.
+- [x] Add secondary combat stats for ailment potency, duration, crit, ward break, healing, and execution effects.
+- [x] Add per-skill proficiency gained from successful automatic or manual casts.
+- [x] Make proficiency ranks improve skill damage and each skill's distinctive secondary effect.
+- [x] Display skill proficiency, effect details, and secondary-stat readouts in the expedition desk.
+- [x] Verify class-tree progression, effect resolution, proficiency ranks, and responsive presentation.

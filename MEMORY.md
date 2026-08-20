@@ -57,3 +57,7 @@ GitHub Pages deployment run 32376884928 completed successfully. The live game di
 The updated development demo displayed the Field Medicine panel with two restorative vial charges and a `MEND +39 VITALITY` control. During the fourth monster room, it showed the Warden at 74/128 health with both charges still available, confirming that a player can choose recovery before the automatic 35% emergency threshold is reached.
 
 The interactive manual-control test consumed one vial, reflected by the field-medicine panel changing to 1/2 charges. The rapid demo continued through later rooms and eventually reached a fallen trap state, while the rolling combat record separately confirmed a treasure cache replenished a missing restorative vial. The deterministic engine test verified the exact manual, cooldown, emergency, and treasure rules without timing ambiguity.
+
+## 2026-08-20 — Central Tableau UX Repair
+
+The central room UX failure was caused by a broad late-stage CSS selector forcing every direct stage child into relative positioning. That overrode the absolute positioning required by the player card, hostile card, room briefing, and primary action. The repair restores explicit absolute layers, confines decorative route geometry to non-interactive pseudo-elements, and separates the state cards from the room briefing. Desktop and mobile screenshots show the cards, ready marker, briefing, and Breach First Room action without overlap or blocked hit targets.

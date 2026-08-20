@@ -32,3 +32,9 @@
 - [x] Add a restorative vial resource usable from the field-medicine inventory controls.
 - [x] Add healing feedback to vitality, restorative charges, cooldown, and the combat record.
 - [x] Verify that healing is capped at maximum health and cannot be used without available charges.
+
+## Central Tableau UX Repair
+
+- [x] Separate decorative route geometry from interactive combat and room-state content.
+- [x] Re-establish a stable central hierarchy for player state, hostile state, room briefing, and primary action.
+- [x] Verify that the repaired central tableau works at desktop and mobile viewport sizes.

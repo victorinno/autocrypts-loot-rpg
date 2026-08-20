@@ -51,6 +51,8 @@ export interface PlayerState {
   health: number;
   maxHealth: number;
   ward: number;
+  healingCharges: number;
+  maxHealingCharges: number;
   gold: number;
   xp: number;
   skillPoints: number;
@@ -100,6 +102,7 @@ export interface GameState {
   inventoryCapacity: number;
   equipment: Item[];
   cooldowns: Record<string, number>;
+  healingCooldown: number;
   automation: AutomationRule[];
   combo: ComboRule;
   lastSkillId: string | null;

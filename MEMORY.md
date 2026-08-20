@@ -49,3 +49,11 @@ Salvaging the selected equipped starter weapon reduced the live inventory counte
 The drop engine was checked independently: a treasure room produced Brassroot Filed Talisman, a combat clear produced Boneglass Filed Greaves, and both instances carried base IDs present in the 250-item catalogue. A cleared combat run increased inventory from five starter instances to six. Temporary validation files were removed after passing.
 
 The 250-item catalogue test confirmed 250 entries with 250 unique IDs and tier-qualified names. It also verified equip replacement within the same slot and salvage removal from both inventory and equipment, including the exact gold reward. Desktop and mobile screenshots showed a readable expedition desk and ledger; `pnpm check` and the production build passed, and the available runtime logs contained no errors.
+
+GitHub Pages deployment run 32376884928 completed successfully. The live game displays Inventory 5/60, tier-qualified starter items, the item-ledger entry point, and the Run Inventory / Catalogue 250 tabs with inspector and action controls.
+
+## 2026-08-20 — Restorative Protocol Verification
+
+The updated development demo displayed the Field Medicine panel with two restorative vial charges and a `MEND +39 VITALITY` control. During the fourth monster room, it showed the Warden at 74/128 health with both charges still available, confirming that a player can choose recovery before the automatic 35% emergency threshold is reached.
+
+The interactive manual-control test consumed one vial, reflected by the field-medicine panel changing to 1/2 charges. The rapid demo continued through later rooms and eventually reached a fallen trap state, while the rolling combat record separately confirmed a treasure cache replenished a missing restorative vial. The deterministic engine test verified the exact manual, cooldown, emergency, and treasure rules without timing ambiguity.

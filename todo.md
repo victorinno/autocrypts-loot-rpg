@@ -25,3 +25,10 @@
 - [x] Replace the compact equipment preview with an accessible inventory panel and item inspector.
 - [x] Make combat and treasure drops draw from the catalogue with tier-aware outcomes.
 - [x] Verify catalogue uniqueness, inventory operations, responsive layout, and published behavior.
+
+## Healing Mechanism
+
+- [x] Add an automatic emergency heal with a visible restorative cooldown.
+- [x] Add a restorative vial resource usable from the field-medicine inventory controls.
+- [x] Add healing feedback to vitality, restorative charges, cooldown, and the combat record.
+- [x] Verify that healing is capped at maximum health and cannot be used without available charges.

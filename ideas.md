@@ -70,3 +70,5 @@ The mark is a compact **open dungeon doorway nested inside a four-point compass*
 ## Style Decisions
 
 Crypt Vermilion is now restricted to the compass spark, current route node, active room urgency, and immediate combat-impact moments. The route thread is treated as a primary brand motif, linking explored rooms, the current room, unknown depth, and the active doctrine through broken ledger-line geometry. Space Grotesk owns class and room moments, IBM Plex Mono owns rules, numbers, and logs, while DM Sans is reserved for compact explanatory copy.
+
+The doorway-compass mark must recur at command points, especially route and room-state moments. Rule builders must behave and look like printed tactical strips rather than browser forms: mono expressions, sharp rails, encoded condition/action fields, and rule-order markers. The room tableau must retain a visible doctrine-to-room signal and broken route geometry even when a room is idle.

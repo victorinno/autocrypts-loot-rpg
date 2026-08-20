@@ -33,3 +33,9 @@ Implement the game as an English-only, asset-free browser interface. The game ne
 The item system is a deterministic catalogue of **250 distinct base items**: five equipment slots, five tiers, and ten themed item families. The runtime inventory stores item instances, not just a compact preview, so the same base entry can be acquired more than once without identity collisions. The player can filter inventory entries, inspect exact stats, equip by slot, and salvage an instance for gold. Combat and treasure rewards select tier-aware entries from the catalogue.
 
 - **Verify:** The catalogue contains exactly 250 unique base IDs and names; acquired inventory instances receive unique IDs; equipping replaces only the same slot; salvaging removes the correct instance and clears an equipped reference when needed; filters and the catalogue view remain usable at narrow widths.
+
+## Restorative Protocol
+
+Each run begins with two restorative vial charges. A vial restores **30% of maximum vitality**, capped at full health, and starts a three-combat-tick recovery cooldown. The player can trigger a vial manually from the field-medicine controls or the inventory ledger. During automatic combat, the Mend Protocol automatically spends a ready vial after incoming damage would leave vitality at or below 35%, including a lethal hit. Treasure rooms restore one missing charge, ensuring recovery is a tactical resource rather than a passive reset.
+
+- **Verify:** healing never exceeds maximum health; manual use consumes one ready charge; the automatic threshold consumes a ready charge before a fallen state is resolved; treasure never raises charges above the maximum; and the interface displays current charges, cooldown, and recovery events.

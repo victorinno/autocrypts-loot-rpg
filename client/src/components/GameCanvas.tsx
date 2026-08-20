@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Engine } from "@babylonjs/core/Engines/engine";
-import { Archive, ArrowDown, ArrowUp, BookOpenText, Box, ChevronRight, Compass, Flame, Gem, PackageOpen, RotateCcw, Shield, Skull, Sparkles, Sword, Target, Trash2, X, Zap } from "lucide-react";
+import { Archive, ArrowDown, ArrowUp, BookOpenText, Box, ChevronRight, Compass, Flame, Gem, HeartPulse, PackageOpen, RotateCcw, Shield, Skull, Sparkles, Sword, Target, Trash2, X, Zap } from "lucide-react";
 import { CATALOGUE, CATALOGUE_TOTAL, CLASSES, CONDITIONS, DAMAGE_META, ITEM_SLOTS, ITEM_TIERS, classById, skillsForClass } from "@/game/data";
-import { equipItem, enterRoom, newGame, reorderAutomation, salvageItem, selectClass, tickCombat, unlockSkill, updateAutomation, updateCombo } from "@/game/engine";
+import { canUseHealing, equipItem, enterRoom, healingAmount, newGame, reorderAutomation, salvageItem, selectClass, tickCombat, unlockSkill, updateAutomation, updateCombo, useHealingVial } from "@/game/engine";
 import { isEquipped } from "@/game/inventory";
 import { createGameScene, type GameHandle } from "@/game/scene";
 import type { ClassId, ConditionId, DamageType, GameState, Item, ItemSlot, ItemTier, LogTone, Skill } from "@/game/types";
@@ -25,6 +25,12 @@ function SkillNode({ skill, game, setGame }: { skill: Skill; game: GameState; se
 }
 
 function TierDot({ tier }: { tier: ItemTier }) { return <span className={`tier-dot tier-${tier.toLowerCase()}`} />; }
+
+function HealingPanel({ game, setGame }: { game: GameState; setGame: React.Dispatch<React.SetStateAction<GameState>> }) {
+  const ready = canUseHealing(game);
+  const nextRestore = healingAmount(game.player);
+  return <section className="panel healing-panel"><div className="panel-kicker">01A / Field medicine</div><div className="healing-heading"><div><HeartPulse size={17} /><span><b>Restorative vial</b><small>Auto-engages at 35% vitality.</small></span></div><em>{game.player.healingCharges}/{game.player.maxHealingCharges}</em></div><button className="healing-action" disabled={!ready} onClick={() => setGame((state) => useHealingVial(state))}>{game.healingCooldown > 0 ? `Recharging · ${game.healingCooldown}T` : game.player.healingCharges === 0 ? "No restorative charge" : `Mend +${nextRestore} vitality`}</button></section>;
+}
 
 export default function GameCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -64,13 +70,14 @@ export default function GameCanvas() {
     <canvas ref={canvasRef} className="game-canvas" aria-hidden="true" />
     <div className="game-overlay">
       <header className="topbar">
-        <div className="brand"><span className="brand-mark"><Compass size={19} strokeWidth={2.5} /></span><span><b>AutoCrypts</b><small>Loot RPG / Doctrine Run</small></span></div>
+        <div className="brand"><span className="brand-mark"><Compass size={19} strokeWidth={2.5} /><i className="brand-spark" /></span><span><b className="wordmark">AutoCrypts</b><small>Loot RPG / Doctrine Run</small></span></div>
         <div className="top-status"><span>RUN {String(game.roomIndex + 1).padStart(2, "0")}</span><i /><span>{game.phase === "combat" ? "AUTOMATIC COMBAT" : "EXPEDITION DESK"}</span></div>
         <div className="header-actions"><button className="inventory-button" onClick={() => setInventoryOpen(true)}><Archive size={14} /> Inventory {game.inventory.length}/{game.inventoryCapacity}</button><button className="reset-button" onClick={() => setGame(newGame(game.player.classId))}><RotateCcw size={14} /> Reset run</button></div>
       </header>
 
       <aside className="left-column">
         <section className="panel player-panel"><div className="panel-kicker">01 / Adventurer</div><div className="player-title"><div className="class-sigil">{classSpec.short}</div><div><h1>{classSpec.name}</h1><p>{classSpec.description}</p></div></div><Meter label="VITALITY" value={game.player.health} max={game.player.maxHealth} /><div className="stat-row"><span><Shield size={14} /> Ward <b>{game.player.ward}</b></span><span><Gem size={14} /> Gold <b>{game.player.gold}</b></span><span><Sparkles size={14} /> XP <b>{game.player.xp}</b></span></div></section>
+        <HealingPanel game={game} setGame={setGame} />
         <section className="panel"><div className="panel-heading"><span>Class folio</span><BookOpenText size={15} /></div><div className="class-list">{CLASSES.map((entry) => <button key={entry.id} className={entry.id === game.player.classId ? "class-choice selected" : "class-choice"} onClick={() => setGame(selectClass(entry.id as ClassId))}><b>{entry.name}</b><span>{entry.primaryDamage}</span></button>)}</div></section>
         <section className="panel skill-panel"><div className="panel-heading"><span>Skill tree</span><b className="point-badge">{game.player.skillPoints} SP</b></div><div className="skill-tree">{classSkills.map((skill) => <SkillNode key={skill.id} skill={skill} game={game} setGame={setGame} />)}</div></section>
         <section className="panel equipment-panel"><div className="panel-heading"><span>Equipped / 5 slots</span><Box size={15} /></div>{game.equipment.slice(0, 5).map((item) => <button className="item-row item-row-button" key={item.id} onClick={() => { setInventoryOpen(true); setInventoryView("inventory"); inspectItem(item); }}><TierDot tier={item.tier} /><div><b>{item.name}</b><small>{item.slot} · {item.stat}</small></div><em>{item.tier}</em></button>)}<button className="inventory-mini-link" onClick={() => setInventoryOpen(true)}><PackageOpen size={13} /> Open item ledger</button></section>

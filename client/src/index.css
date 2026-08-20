@@ -1,177 +1,64 @@
+/** Modernist Dungeon Ledger: graphite, bone, semantic pigment, and no image assets. */
 @import "tailwindcss";
-@import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+:root { font-family: "DM Sans", Arial, sans-serif; color: #f1eee8; background: #101112; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; background: #101112; }
+button, select { font: inherit; }
+button:not(:disabled), select:not(:disabled) { cursor: pointer; }
+button:focus-visible, select:focus-visible { outline: 2px solid #78c5c8; outline-offset: 2px; }
+.game-shell { min-height: 100svh; overflow: hidden; position: relative; background: #101112; }
+.game-canvas { position: fixed; inset: 0; width: 100%; height: 100%; outline: none; opacity: .72; }
+.game-canvas::after { content: ""; }
+.game-overlay { position: relative; z-index: 1; min-height: 100svh; display: grid; grid-template-columns: 270px minmax(470px, 1fr) 332px; grid-template-rows: auto minmax(0, 1fr); gap: 12px; padding: 12px; pointer-events: none; }
+.game-overlay > * { pointer-events: auto; }
+.topbar { grid-column: 1 / -1; min-height: 62px; border: 1px solid rgba(240,237,231,.19); background: rgba(16,17,18,.9); backdrop-filter: blur(18px); display: flex; align-items: center; justify-content: space-between; padding: 10px 13px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: "Space Grotesk", sans-serif; letter-spacing: .08em; }
+.brand-mark { width: 36px; height: 36px; display: grid; place-items: center; color: #d95b38; border: 1px solid currentColor; position: relative; }
+.brand-mark::after { content: ""; position: absolute; width: 4px; height: 4px; background: #d95b38; bottom: 5px; }
+.brand b { display: block; font-size: 14px; line-height: 1; }
+.brand small { display: block; margin-top: 4px; color: #9ba1a5; font: 10px "IBM Plex Mono", monospace; letter-spacing: .02em; }
+.top-status { display: flex; align-items: center; gap: 9px; color: #a9afb2; font: 10px "IBM Plex Mono", monospace; letter-spacing: .08em; }
+.top-status i { width: 4px; height: 4px; border-radius: 50%; background: #d95b38; }
+.reset-button { border: 1px solid #4b5156; background: transparent; color: #e7e3db; display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; font: 11px "IBM Plex Mono", monospace; text-transform: uppercase; transition: transform .16s cubic-bezier(.23,1,.32,1), background .16s cubic-bezier(.23,1,.32,1); }
+.reset-button:hover { background: #282c2f; }.reset-button:active { transform: scale(.97); }
+.left-column, .right-column, .center-column { min-height: 0; overflow: auto; scrollbar-width: thin; scrollbar-color: #4b5156 transparent; }
+.left-column, .right-column { display: flex; flex-direction: column; gap: 12px; }
+.center-column { display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+.panel { border: 1px solid rgba(240,237,231,.2); background: rgba(18,20,22,.88); backdrop-filter: blur(16px); padding: 14px; }
+.panel-kicker { color: #d95b38; font: 10px "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .09em; }
+.panel-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #f1eee8; font: 600 13px "Space Grotesk", sans-serif; letter-spacing: .02em; }
+.player-title { display: flex; gap: 11px; align-items: center; margin: 10px 0 14px; }.player-title h1 { margin: 0; font: 600 21px "Space Grotesk", sans-serif; }.player-title p { margin: 3px 0 0; color: #9ba1a5; font-size: 11px; line-height: 1.4; }
+.class-sigil { width: 41px; height: 41px; display: grid; place-items: center; color: #101112; background: #f1eee8; font: 600 12px "IBM Plex Mono", monospace; }
+.meter { margin-top: 10px; }.meter-label { display: flex; justify-content: space-between; margin-bottom: 5px; color: #aeb3b5; font: 9px "IBM Plex Mono", monospace; letter-spacing: .08em; }.meter-label b { color: #f1eee8; font-weight: 500; }
+.meter-track { height: 5px; background: #2c3134; overflow: hidden; }.meter-track span { display: block; height: 100%; background: #d95b38; transition: width .24s cubic-bezier(.23,1,.32,1); }.meter-track.enemy span { background: #e87459; }.meter-track.ward span { background: #78c5c8; }
+.stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 14px; }.stat-row span { display: flex; flex-direction: column; gap: 4px; color: #aeb3b5; font-size: 10px; }.stat-row svg { color: #78c5c8; }.stat-row b { color: #f1eee8; font: 600 13px "IBM Plex Mono", monospace; }
+.class-list { display: grid; gap: 5px; }.class-choice { display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; padding: 8px 9px; color: #b4b9bb; background: #1b1e20; text-align: left; transition: border-color .16s, background .16s; }.class-choice:hover, .class-choice.selected { border-color: #d95b38; background: #252323; color: #f1eee8; }.class-choice b { font-size: 12px; }.class-choice span { color: #78c5c8; font: 9px "IBM Plex Mono", monospace; text-transform: uppercase; }
+.point-badge { color: #101112; background: #f1eee8; padding: 2px 5px; font: 9px "IBM Plex Mono", monospace; }.skill-tree { display: grid; gap: 5px; }.skill-node { width: 100%; display: grid; grid-template-columns: 24px 1fr auto; gap: 7px; align-items: center; border: 1px solid #303538; padding: 8px; text-align: left; background: #16191b; color: #757d80; }.skill-node.unlocked { color: #f1eee8; border-color: #6e7476; }.skill-node.available { border-color: #d95b38; color: #f1eee8; }.skill-node:disabled { cursor: default; }.skill-tier { grid-row: span 2; color: #92999c; font: 9px "IBM Plex Mono", monospace; }.skill-name { font-size: 11px; font-weight: 700; }.skill-copy { grid-column: 2 / -1; color: #969d9f; font: 9px "IBM Plex Mono", monospace; }
+.damage-tag { display: inline-grid; place-items: center; min-width: 23px; height: 18px; padding: 0 4px; font: 9px "IBM Plex Mono", monospace; letter-spacing: -.02em; color: #101112; }.damage-slash { background: #d96767; }.damage-pierce { background: #cbb788; }.damage-blunt { background: #9b9c99; }.damage-fire { background: #f08347; }.damage-frost { background: #78c5c8; }.damage-arcane { background: #9d8ed1; }.damage-poison { background: #a6c76a; }
+.equipment-panel { padding-bottom: 5px; }.item-row { display: grid; grid-template-columns: 7px 1fr auto; align-items: center; gap: 7px; border-top: 1px solid #2b3032; padding: 8px 0; }.item-row b, .item-row small { display: block; }.item-row b { font-size: 10px; }.item-row small { margin-top: 2px; color: #92999c; font: 9px "IBM Plex Mono", monospace; }.item-row em { color: #92999c; font: 8px "IBM Plex Mono", monospace; font-style: normal; }.tier-dot { width: 6px; height: 6px; background: #9b9c99; }.tier-rare { background: #78c5c8; }.tier-epic { background: #9d8ed1; }.tier-relic { background: #e7c45c; }
+.route-strip { display: flex; min-height: 34px; align-items: center; gap: 8px; padding: 0 12px; background: rgba(18,20,22,.87); border: 1px solid rgba(240,237,231,.2); color: #7f878a; font: 9px "IBM Plex Mono", monospace; letter-spacing: .06em; }.route-strip i { flex: 1; max-width: 58px; height: 1px; background: #545a5d; }.route-strip .route-fade { background: linear-gradient(90deg, #545a5d, transparent); }.route-strip .visited { color: #f1eee8; }.route-strip .active-node { display: grid; place-items: center; width: 19px; height: 19px; color: #101112; background: #d95b38; }.route-strip b { margin-left: auto; color: #c3c8c9; font-weight: 500; }
+.room-stage { flex: 1; min-height: 430px; position: relative; overflow: hidden; border: 1px solid rgba(240,237,231,.27); background: rgba(8,10,12,.34); }.room-stage::before { content: ""; position: absolute; inset: 30px; border: 1px solid rgba(240,237,231,.11); pointer-events: none; }.stage-corner { position: absolute; width: 21px; height: 21px; border-color: #d95b38; z-index: 1; }.top-left { top: 14px; left: 14px; border-top: 2px solid; border-left: 2px solid; }.top-right { top: 14px; right: 14px; border-top: 2px solid; border-right: 2px solid; }.bottom-left { left: 14px; bottom: 14px; border-bottom: 2px solid; border-left: 2px solid; }.bottom-right { right: 14px; bottom: 14px; border-bottom: 2px solid; border-right: 2px solid; }.stage-label { position: absolute; top: 18px; left: 49px; color: #babfbe; font: 9px "IBM Plex Mono", monospace; letter-spacing: .1em; }
+.combat-card { position: absolute; width: min(185px, 31%); padding: 9px; background: rgba(13,15,17,.82); border: 1px solid rgba(240,237,231,.22); }.combat-card span { color: #aeb3b5; font: 8px "IBM Plex Mono", monospace; letter-spacing: .11em; }.combat-card b { display: block; margin-top: 4px; font: 600 13px "Space Grotesk", sans-serif; }.combat-card small { display: block; margin-top: 2px; color: #858d90; font: 9px "IBM Plex Mono", monospace; }.player-card { top: 29%; left: 7%; }.enemy-card { top: 29%; right: 7%; }.enemy-card.idle { border-color: #4c5458; }.versus { position: absolute; top: 34%; left: 50%; transform: translateX(-50%); display: grid; gap: 5px; justify-items: center; color: #d95b38; font: 9px "IBM Plex Mono", monospace; }.room-copy { position: absolute; left: 30px; right: 30px; bottom: 26px; max-width: 580px; }.room-copy h2 { margin: 7px 0; font: 600 clamp(24px,3.7vw,43px) "Space Grotesk", sans-serif; letter-spacing: -.05em; }.room-copy p { max-width: 510px; margin: 0 0 13px; color: #afb4b5; font-size: 12px; line-height: 1.5; }.breach-button { display: inline-flex; align-items: center; gap: 7px; border: 1px solid #d95b38; background: #d95b38; color: #151617; padding: 10px 12px; font: 600 10px "IBM Plex Mono", monospace; letter-spacing: .05em; text-transform: uppercase; transition: transform .16s cubic-bezier(.23,1,.32,1), background .16s; }.breach-button:hover { background: #f07856; }.breach-button:active { transform: scale(.97); }.breach-button.executing { background: #3d4345; border-color: #707779; color: #c3c8c9; cursor: wait; }
+.log-panel { max-height: 184px; overflow: hidden; }.live-dot { color: #78c5c8; font: 9px "IBM Plex Mono", monospace; }.combat-log { display: grid; gap: 3px; }.log-entry { display: grid; grid-template-columns: 43px 1fr; gap: 7px; border-top: 1px solid #2b3032; padding-top: 6px; }.log-entry span { color: #9ba1a5; font: 8px "IBM Plex Mono", monospace; }.log-entry p { margin: 0; color: #c3c8c9; font-size: 10px; line-height: 1.35; }.log-damage span { color: #f08347; }.log-loot span { color: #e7c45c; }.log-combo span { color: #78c5c8; }.log-danger span { color: #d96767; }
+.panel-intro { margin: -4px 0 11px; color: #92999c; font-size: 10px; line-height: 1.4; }.rule-list { display: grid; gap: 6px; }.rule-row { display: grid; grid-template-columns: 22px 1fr 26px; gap: 6px; align-items: center; padding: 6px; border: 1px solid #303538; background: #15181a; }.rule-index { color: #d95b38; font: 9px "IBM Plex Mono", monospace; }.rule-controls { display: grid; gap: 4px; }.rule-controls select, .combo-flow select { width: 100%; border: 1px solid #3c4346; color: #e4e1da; background: #24282a; padding: 5px; font: 9px "IBM Plex Mono", monospace; }.rule-move { display: grid; gap: 2px; }.rule-move button { display: grid; place-items: center; border: 0; color: #afb4b5; background: #2b3032; padding: 3px; }.rule-move button:hover { color: #f1eee8; background: #444b4e; }
+.combo-flow { display: grid; grid-template-columns: 1fr 22px 1fr; align-items: center; gap: 4px; }.combo-line { display: grid; place-items: center; color: #d95b38; }.combo-result { display: grid; grid-template-columns: auto 1fr; gap: 7px; margin-top: 11px; color: #92999c; font-size: 10px; line-height: 1.35; }.combo-result svg { color: #d95b38; }.combo-result b { grid-column: 2; color: #e7c45c; font: 10px "IBM Plex Mono", monospace; }.damage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }.damage-grid div { display: flex; align-items: center; gap: 6px; color: #aeb3b5; font-size: 10px; }.minimal-callout { border-left: 2px solid #d95b38; padding: 10px; display: flex; gap: 8px; color: #9ba1a5; background: rgba(217,91,56,.08); }.minimal-callout svg { flex: 0 0 auto; color: #d95b38; }.minimal-callout p { margin: 0; font-size: 10px; line-height: 1.45; }.minimal-callout b { color: #f1eee8; }
+@media (max-width: 1080px) { .game-overlay { grid-template-columns: 250px minmax(430px, 1fr); }.right-column { grid-column: 1 / -1; display: grid; grid-template-columns: 1.2fr 1fr 1fr; align-items: start; }.minimal-callout { display: none; } }
+@media (max-width: 760px) { .game-overlay { display: flex; flex-direction: column; padding: 8px; overflow: auto; }.topbar { position: sticky; top: 0; z-index: 4; min-height: 54px; }.top-status { display: none; }.brand small { display: none; }.left-column, .center-column, .right-column { overflow: visible; }.left-column { display: grid; grid-template-columns: 1fr 1fr; }.player-panel, .skill-panel, .equipment-panel { grid-column: 1 / -1; }.center-column { order: 2; }.right-column { order: 3; display: flex; align-items: stretch; }.room-stage { min-height: 410px; }.combat-card { width: 38%; }.player-card { left: 6%; }.enemy-card { right: 6%; }.route-strip i { max-width: 31px; }.route-strip b { display: none; } }
+@media (max-width: 470px) { .left-column { display: flex; }.topbar { padding: 8px; }.reset-button { padding: 7px; font-size: 9px; }.room-copy { left: 21px; right: 21px; }.room-copy h2 { font-size: 30px; }.combat-card { width: 42%; }.damage-grid { grid-template-columns: 1fr 1fr 1fr; }.damage-grid div span:last-child { display: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-}
-
-:root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
-}
-
-.dark {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-500);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.85 0.005 65);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.85 0.005 65);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.85 0.005 65);
-  --secondary: oklch(0.24 0.006 286.033);
-  --secondary-foreground: oklch(0.7 0.005 65);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground:  oklch(0.92 0.005 65);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.488 0.243 264.376);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.85 0.005 65);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground:  oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.488 0.243 264.376);
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  button:not(:disabled),
-  [role="button"]:not([aria-disabled="true"]),
-  [type="button"]:not(:disabled),
-  [type="submit"]:not(:disabled),
-  [type="reset"]:not(:disabled),
-  a[href],
-  select:not(:disabled),
-  input[type="checkbox"]:not(:disabled),
-  input[type="radio"]:not(:disabled) {
-    @apply cursor-pointer;
-  }
-}
-
-@layer components {
-  /**
-   * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
-   *
-   * Usage: <div className="container">...</div>
-   *
-   * For custom widths, use max-w-* utilities directly:
-   * <div className="max-w-6xl mx-auto px-4">...</div>
-   */
-  .container {
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1rem; /* 16px - mobile padding */
-    padding-right: 1rem;
-  }
-
-  .flex {
-    min-height: 0;
-    min-width: 0;
-  }
-
-  @media (min-width: 640px) {
-    .container {
-      padding-left: 1.5rem; /* 24px - tablet padding */
-      padding-right: 1.5rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .container {
-      padding-left: 2rem; /* 32px - desktop padding */
-      padding-right: 2rem;
-      max-width: 1280px; /* Standard content width */
-    }
-  }
-}
+/* Modernist Dungeon Ledger refinement: bone record sheets, neutral operations, vermilion only for urgency. */
+.panel { background: rgba(235, 232, 224, .96); color: #202426; box-shadow: 8px 8px 0 rgba(0,0,0,.16); border-color: rgba(235,232,224,.62); }
+.panel .panel-kicker { color: #687073; }.panel .panel-heading, .panel .player-title h1, .panel .item-row b, .panel .class-choice.selected, .panel .skill-node.unlocked, .panel .skill-node.available { color: #202426; }
+.panel .player-title p, .panel .panel-intro, .panel .item-row small, .panel .item-row em, .panel .skill-copy, .panel .stat-row span, .panel .meter-label, .panel .combo-result, .panel .damage-grid div { color: #5e6668; }
+.panel .meter-label b, .panel .stat-row b { color: #202426; }.panel .meter-track { background: #c3c5bf; }.panel .meter-track span, .panel .meter-track.enemy span { background: #282d2f; }.panel .meter-track.ward span { background: #4f8b8d; }
+.panel .class-choice { background: transparent; color: #60686a; border-color: #c2c4be; }.panel .class-choice:hover, .panel .class-choice.selected { border-color: #566164; background: #d9dad4; }.panel .class-choice span { color: #4f8b8d; }
+.panel .skill-node { background: #f3f1eb; border-color: #babdb8; color: #777e80; }.panel .skill-node.unlocked { border-color: #757d7d; }.panel .skill-node.available { border-color: #4f8b8d; background: #e6efed; }.panel .skill-tier { color: #656d6f; }
+.panel .point-badge { background: #202426; color: #f2efe8; }.panel .item-row { border-color: #c1c3be; }.panel .rule-row { background: #d8d9d4; border-color: #b3b7b2; }.panel .rule-controls select, .panel .combo-flow select { color: #202426; background: #f3f1eb; border-color: #9ba29f; }.panel .rule-move button { background: #b9bdb8; color: #202426; }.panel .rule-move button:hover { background: #818987; color: #f2efe8; }.panel .combo-result svg { color: #4f8b8d; }.panel .combo-result b { color: #806b28; }
+.brand b { position: relative; display: inline-block; font-size: 16px; letter-spacing: -.045em; text-transform: none; }.brand b::after { content: ""; position: absolute; left: 0; bottom: -3px; width: 100%; height: 1px; background: linear-gradient(90deg, #f1eee8 0 24%, transparent 24% 31%, #f1eee8 31% 100%); }.brand small { margin-top: 7px; }.brand-mark { border-color: #d2d4ce; }.brand-mark::before { content: ""; position: absolute; width: 8px; height: 11px; border: 1px solid #d2d4ce; border-bottom: 0; bottom: 7px; }.brand-mark::after { width: 3px; height: 3px; }
+.route-strip { display: flex; justify-content: space-between; align-items: center; padding: 0 12px 0 13px; }.route-ledger { display: flex; min-width: 0; flex: 1; align-items: center; gap: 8px; }.route-strip > em { display: flex; align-items: center; gap: 7px; color: #9aa1a2; font: 8px "IBM Plex Mono", monospace; letter-spacing: .08em; font-style: normal; white-space: nowrap; }.route-strip > em::before { content: ""; display: block; width: 38px; height: 1px; background: repeating-linear-gradient(90deg, #78c5c8 0 6px, transparent 6px 10px); }
+.room-stage { background-color: rgba(8,10,12,.54); background-image: linear-gradient(rgba(240,237,231,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(240,237,231,.04) 1px, transparent 1px); background-size: 38px 38px; }.room-stage::before { background: linear-gradient(90deg, transparent 49.9%, rgba(120,197,200,.16) 50%, transparent 50.1%); }.room-stage::after { content: ""; position: absolute; right: 0; top: 50%; width: 23%; height: 1px; background: repeating-linear-gradient(90deg, #78c5c8 0 8px, transparent 8px 13px); opacity: .8; }
+.stage-label { color: #c6ccca; }.combat-card { border-color: rgba(240,237,231,.32); }.combat-card span { color: #b8c0bf; }.combat-card b { font-family: "Space Grotesk", sans-serif; font-size: 15px; }.combat-card small { color: #a5acad; }.versus { color: #78c5c8; }.room-copy h2 { max-width: 600px; line-height: .96; }.room-copy .panel-kicker { color: #d95b38; }.room-copy p { color: #c7cccc; }.breach-button { background: #1e2325; border-color: #d1d4cc; color: #f2efe8; }.breach-button:hover { background: #30383a; }.breach-button.executing { background: #343b3d; border-color: #687173; }
+.combat-card .meter-track span { background: #e1e0d9; }.combat-card .meter-track.enemy span { background: #768083; }.log-panel .log-entry p { color: #3c4648; }.log-panel .log-entry { border-color: #9fa49e; }.log-panel .log-entry span { color: #566164; }.log-panel .log-damage span { color: #a64e37; }.log-panel .log-loot span { color: #806b28; }.log-panel .log-combo span { color: #2f7072; }.log-panel .log-danger span { color: #a44747; }
+@media (max-width: 760px) { .route-strip > em { display: none; } }

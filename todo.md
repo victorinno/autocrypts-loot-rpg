@@ -9,4 +9,19 @@
 - [x] Add combo rules that trigger sequenced effects between compatible skills.
 - [x] Implement equipment tiers, rarity, and stat changes.
 - [x] Verify desktop and mobile layouts, interactions, type checking, and browser console health.
-- [ ] Publish the repository under vicotrinno and enable GitHub Pages.
+- [x] Publish the repository under victorinno and enable GitHub Pages.
+
+## Gameplay QA Pass
+
+- [x] Validate a full automatic monster-room combat and a combo trigger.
+- [x] Validate treasure, nothing, and trap room resolutions across successive rooms.
+- [x] Validate class changes, skill unlocks, automation priority edits, and reset behavior.
+- [x] Inspect the published runtime for console errors and report the test outcome.
+
+## Inventory Expansion
+
+- [x] Define a deterministic 250-item catalogue across slots, tiers, and stat families.
+- [x] Add inventory capacity, filtering, selection, equip, and salvage rules.
+- [x] Replace the compact equipment preview with an accessible inventory panel and item inspector.
+- [x] Make combat and treasure drops draw from the catalogue with tier-aware outcomes.
+- [x] Verify catalogue uniqueness, inventory operations, responsive layout, and published behavior.

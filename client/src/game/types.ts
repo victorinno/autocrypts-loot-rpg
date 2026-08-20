@@ -1,4 +1,4 @@
-/** Modernist Dungeon Ledger: framework-independent game contracts. */
+/** Modernist Dungeon Ledger: framework-independent game contracts and catalogue-backed inventory. */
 
 export type ClassId = "warden" | "arcanist" | "ravager";
 export type DamageType = "slash" | "pierce" | "blunt" | "fire" | "frost" | "arcane" | "poison";
@@ -6,6 +6,8 @@ export type ConditionId = "always" | "enemyBurning" | "enemyFrosted" | "enemyLow
 export type RoomKind = "nothing" | "monster" | "treasure" | "trap";
 export type GamePhase = "planning" | "combat" | "resolved" | "fallen";
 export type LogTone = "neutral" | "damage" | "loot" | "combo" | "danger";
+export type ItemSlot = "Weapon" | "Armor" | "Relic" | "Helm" | "Boots";
+export type ItemTier = "COMMON" | "UNCOMMON" | "RARE" | "EPIC" | "RELIC";
 
 export interface Skill {
   id: string;
@@ -28,12 +30,20 @@ export interface ClassSpec {
   primaryDamage: DamageType;
 }
 
-export interface Item {
+export interface ItemBlueprint {
   id: string;
   name: string;
-  slot: "Weapon" | "Armor" | "Relic";
-  tier: "COMMON" | "RARE" | "EPIC" | "RELIC";
+  slot: ItemSlot;
+  tier: ItemTier;
   stat: string;
+  description: string;
+  value: number;
+}
+
+export interface Item extends Omit<ItemBlueprint, "id"> {
+  id: string;
+  baseId: string;
+  acquiredAt: number;
 }
 
 export interface PlayerState {
@@ -86,6 +96,8 @@ export interface GameState {
   currentRoom: Room;
   player: PlayerState;
   enemy: Enemy | null;
+  inventory: Item[];
+  inventoryCapacity: number;
   equipment: Item[];
   cooldowns: Record<string, number>;
   automation: AutomationRule[];

@@ -27,3 +27,9 @@ Implement the game as an English-only, asset-free browser interface. The game ne
   - Desktop and mobile layouts are usable without overflow or clipped controls.
   - No browser console errors occur during an automated combat run.
   - The page matches the minimalist direction: dark graphite ground, warm white paper-like panels, restrained Crypt Vermilion accent, no image backgrounds, and no generic centered marketing layout.
+
+## Inventory Expansion
+
+The item system is a deterministic catalogue of **250 distinct base items**: five equipment slots, five tiers, and ten themed item families. The runtime inventory stores item instances, not just a compact preview, so the same base entry can be acquired more than once without identity collisions. The player can filter inventory entries, inspect exact stats, equip by slot, and salvage an instance for gold. Combat and treasure rewards select tier-aware entries from the catalogue.
+
+- **Verify:** The catalogue contains exactly 250 unique base IDs and names; acquired inventory instances receive unique IDs; equipping replaces only the same slot; salvaging removes the correct instance and clears an equipped reference when needed; filters and the catalogue view remain usable at narrow widths.

@@ -39,3 +39,9 @@ The item system is a deterministic catalogue of **250 distinct base items**: fiv
 Each run begins with two restorative vial charges. A vial restores **30% of maximum vitality**, capped at full health, and starts a three-combat-tick recovery cooldown. The player can trigger a vial manually from the field-medicine controls or the inventory ledger. During automatic combat, the Mend Protocol automatically spends a ready vial after incoming damage would leave vitality at or below 35%, including a lethal hit. Treasure rooms restore one missing charge, ensuring recovery is a tactical resource rather than a passive reset.
 
 - **Verify:** healing never exceeds maximum health; manual use consumes one ready charge; the automatic threshold consumes a ready charge before a fallen state is resolved; treasure never raises charges above the maximum; and the interface displays current charges, cooldown, and recovery events.
+
+## Equipped-Item Comparison
+
+The item ledger compares the selected acquired item against the active loadout entry for the same slot. Because a slot always maps to one stat family, the system parses the item’s numerical field-stat and displays the signed delta as an **upgrade**, **downgrade**, or **lateral** result. The inspector also exposes tier movement and salvage-value movement. When the slot is empty, the ledger identifies the selected record as an open-slot equip rather than inventing a comparison.
+
+- **Verify:** comparison values are calculated only for the same slot; stat, tier, and value changes use directional labels; equipped entries compare to themselves without presenting a false upgrade; and the compact mobile inspector remains readable.

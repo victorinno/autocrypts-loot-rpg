@@ -38,3 +38,10 @@
 - [x] Separate decorative route geometry from interactive combat and room-state content.
 - [x] Re-establish a stable central hierarchy for player state, hostile state, room briefing, and primary action.
 - [x] Verify that the repaired central tableau works at desktop and mobile viewport sizes.
+
+## Ledger Item Comparison
+
+- [x] Compare a selected inventory item with the equipped item in its slot.
+- [x] Display tier, field-stat, value, and directional upgrade/downgrade feedback.
+- [x] Preserve clear behavior when no item is equipped in a selected slot.
+- [x] Verify ledger comparison on desktop and mobile viewports.

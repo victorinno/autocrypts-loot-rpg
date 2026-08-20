@@ -5,7 +5,7 @@ import { Engine } from "@babylonjs/core/Engines/engine";
 import { Archive, ArrowDown, ArrowUp, BookOpenText, Box, ChevronRight, Compass, Flame, Gem, HeartPulse, PackageOpen, RotateCcw, Shield, Skull, Sparkles, Sword, Target, Trash2, X, Zap } from "lucide-react";
 import { CATALOGUE, CATALOGUE_TOTAL, CLASSES, CONDITIONS, DAMAGE_META, ITEM_SLOTS, ITEM_TIERS, classById, skillsForClass } from "@/game/data";
 import { canUseHealing, equipItem, enterRoom, healingAmount, newGame, reorderAutomation, salvageItem, selectClass, tickCombat, unlockSkill, updateAutomation, updateCombo, useHealingVial } from "@/game/engine";
-import { isEquipped } from "@/game/inventory";
+import { compareItemToEquipped, isEquipped, type LoadoutComparison } from "@/game/inventory";
 import { createGameScene, type GameHandle } from "@/game/scene";
 import type { ClassId, ConditionId, DamageType, GameState, Item, ItemSlot, ItemTier, LogTone, Skill } from "@/game/types";
 
@@ -32,6 +32,13 @@ function HealingPanel({ game, setGame }: { game: GameState; setGame: React.Dispa
   return <section className="panel healing-panel"><div className="panel-kicker">01A / Field medicine</div><div className="healing-heading"><div><HeartPulse size={17} /><span><b>Restorative vial</b><small>Auto-engages at 35% vitality.</small></span></div><em>{game.player.healingCharges}/{game.player.maxHealingCharges}</em></div><button className="healing-action" disabled={!ready} onClick={() => setGame((state) => useHealingVial(state))}>{game.healingCooldown > 0 ? `Recharging · ${game.healingCooldown}T` : game.player.healingCharges === 0 ? "No restorative charge" : `Mend +${nextRestore} vitality`}</button></section>;
 }
 
+function deltaLabel(value: number, suffix = ""): string { return value > 0 ? `+${value}${suffix}` : value < 0 ? `${value}${suffix}` : `±0${suffix}`; }
+
+function ComparisonStrip({ comparison }: { comparison: LoadoutComparison }) {
+  const label = comparison.verdict === "open-slot" ? "Open slot" : comparison.verdict === "equipped" ? "Equipped" : comparison.verdict === "upgrade" ? "Upgrade" : comparison.verdict === "downgrade" ? "Downgrade" : "Lateral";
+  return <section className={`comparison-strip comparison-${comparison.verdict}`}><div className="comparison-title"><span>LOADOUT COMPARE</span><b>{label}</b></div>{comparison.equipped ? <><p><span>Current</span>{comparison.equipped.name}</p><div className="comparison-metrics"><div><span>FIELD</span><b>{deltaLabel(comparison.statDelta)}</b></div><div><span>TIER</span><b>{deltaLabel(comparison.tierDelta)}</b></div><div><span>VALUE</span><b>{deltaLabel(comparison.valueDelta, "g")}</b></div></div></> : <p><span>Current</span>No item is equipped in this slot.</p>}</section>;
+}
+
 export default function GameCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const startedRef = useRef(false);
@@ -46,6 +53,7 @@ export default function GameCanvas() {
   const sourceItems = inventoryView === "inventory" ? game.inventory : CATALOGUE;
   const filteredItems = useMemo(() => sourceItems.filter((item) => (slotFilter === "ALL" || item.slot === slotFilter) && (tierFilter === "ALL" || item.tier === tierFilter)), [sourceItems, slotFilter, tierFilter]);
   const selectedItem = (filteredItems.find((item) => item.id === selectedItemId) ?? filteredItems[0] ?? null) as InventoryEntry | null;
+  const comparison = selectedItem ? compareItemToEquipped(game, selectedItem) : null;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -68,6 +76,7 @@ export default function GameCanvas() {
 
   return <div className="game-shell">
     <canvas ref={canvasRef} className="game-canvas" aria-hidden="true" />
+    {inventoryOpen && comparison && <div className="inventory-compare-dock"><ComparisonStrip comparison={comparison} /></div>}
     <div className="game-overlay">
       <header className="topbar">
         <div className="brand"><span className="brand-mark"><Compass size={19} strokeWidth={2.5} /><i className="brand-spark" /></span><span><b className="wordmark">AutoCrypts</b><small>Loot RPG / Doctrine Run</small></span></div>
